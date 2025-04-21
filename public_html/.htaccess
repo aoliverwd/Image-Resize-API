@@ -1,0 +1,119 @@
+# Set / Update headers
+<IfModule mod_headers.c>
+    # HTTP Strict Transport Security (HSTS)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+    # X-Content-Type-Options
+    Header set X-Content-Type-Options "nosniff"
+
+    # X-XSS-Protection
+    Header set X-XSS-Protection "1; mode=block"
+
+    # X-Frame-Options
+    Header set X-Frame-Options "SAMEORIGIN"
+
+    # Referrer Policy
+    Header set Referrer-Policy "no-referrer-when-downgrade"
+
+    # Permissions-Policy
+    Header set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
+
+    # Cache-Control
+    Header set Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate"
+
+    # CORS
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+    # Ensure cookies are secure
+    Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure;SameSite=Strict;Path=/;Max-Age=3600
+
+    # Caching for images, CSS, JS, and fonts
+    <FilesMatch "\.(jpg|jpeg|png|gif|svg|webp|css|js|woff|woff2|ttf|otf|eot|ico)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+        Header set Expires "Thu, 31 Dec 2037 23:55:55 GMT"
+    </FilesMatch>
+
+    # Caching for HTML, PHP (shorter expiration for dynamic content)
+    <FilesMatch "\.(html|php|cgi|pl|xml|json)$">
+        Header set Cache-Control "private, no-store, no-cache, must-revalidate"
+    </FilesMatch>
+
+    # Enable ETag and Last-Modified for conditional caching
+    Header set ETag "%{REQUEST_URI}e"
+    Header set Last-Modified "%{TIME}e"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    # Compress HTML, CSS, JavaScript, Text, XML and fonts
+    AddOutputFilterByType DEFLATE application/javascript \
+      application/json \
+      application/xml \
+      application/xhtml+xml \
+      application/rss+xml \
+      application/font-woff \
+      application/font-woff2 \
+      application/vnd.ms-fontobject \
+      application/x-font-ttf \
+      application/x-font-opentype \
+      text/html \
+      text/css \
+      text/plain \
+      text/xml \
+      text/javascript \
+      font/woff2 \
+      font/woff \
+      font/ttf
+
+    # Ensure old browsers don't have issues
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+    # Exclude certain files from compression
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|bmp|ico)$ no-gzip
+    SetEnvIfNoCase Request_URI \.(?:mp4|avi|mp3|mov)$ no-gzip
+</IfModule>
+
+# Blocking Access to Hidden Files (e.g., .htaccess, .env, etc.)
+<FilesMatch "^\.">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block Access to Files with Specific Extensions
+<FilesMatch "\.(log|sql|env|ini)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
+
+# Allow Specific IPs While Blocking Others for Certain Files
+#<Files "admin.php">
+#  Order Deny,Allow
+#  Deny from all
+#  Allow from 192.168.1.100
+#  Allow from 203.0.113.55
+#</Files>
+
+# Use the Require directive to allow specific IPs and deny all others
+#<RequireAll>
+# Require ip 192.168.1.0/24 203.0.113.55
+# Require all denied
+#</RequireAll>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS
+  #RewriteCond %{HTTPS} off
+  #RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Preserve the HTTP Authorization header
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+  # Send all traffic to index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

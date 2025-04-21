@@ -1,0 +1,8 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - public_html
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # The below constants are defined when running the application from a web server

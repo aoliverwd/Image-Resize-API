@@ -1,0 +1,6 @@
+.DS_Store
+vendor
+*.log
+.phpactor.json
+assets/*.*
+!assets

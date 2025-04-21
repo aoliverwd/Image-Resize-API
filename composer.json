@@ -1,0 +1,48 @@
+{
+    "name": "alexoliverwd/image-resize-api",
+    "description": "A simple API for resizing images",
+    "version": "1.0.0",
+    "keywords": [
+        "image",
+        "api"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Oliver",
+            "homepage": "https://github.com/aoliverwd/image-resize-api",
+            "role": "Lead"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/aoliverwd/image-resize-api/issues"
+    },
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.3",
+        "intervention/image": "^3.11",
+        "alexoliverwd/basic-router": "^0.1.3",
+        "alexoliverwd/dotenv-loader": "^1.1"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test": [
+            "./vendor/bin/phpstan analyse -c phpstan.neon"
+        ],
+        "unit": [
+            "./vendor/bin/pest"
+        ]
+    }
+}

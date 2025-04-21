@@ -1,0 +1,8 @@
+name: image-resize-api
+
+services:
+    php:
+        type: php:8.3
+        via: apache
+        https: true
+        webroot: public_html
