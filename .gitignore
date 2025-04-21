@@ -3,4 +3,4 @@ vendor
 *.log
 .phpactor.json
 assets/*.*
-!assets
+!assets/README.md
